@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Reviving The Old RTEMS Tester Work"
-date:   2017-06-03 19:50:31 +0530
+date:   2017-06-03 19:51:31 +0530
 categories: rtems
 ---
 The first thing I did is learn how to use git. The workflow I settled on is keep a pristine RTEMS master and make a branch
@@ -38,7 +38,7 @@ recent, both seemed to work.
 At this stage I didn't understand things too well so when presented with two choices from each work I might just pick one
 and see how it went. For instance in rt/test.py:
 
-{% highlight bash %}
+{% highlight %}
 coverage_enabled = opts.opts['coverage']
 # or I could use
 coverage_enabled = opts.coverage()
@@ -50,7 +50,7 @@ could just print this at runtime, although there was nothing to run yet so maybe
 
 Or again from tester/rtems/testing/gdb.cfg:
 
-{% highlight bash %}
+{% highlight %}
 %if %{_coverage}
 # or I could use
 %if %{defined _coverage}
@@ -60,7 +60,7 @@ I used the first one and it later turned into a runtime error on rtems-test (RTE
 
 Similar choices in qemu.cfg and I have yet to decide which options would be best in there.
 
-{% highlight bash %}
+{% highlight %}
 # So far all 3 options leave runtime errors and I suspect it is the bsp qemu 
 # options causing the problems.
 #%define qemu_opts_base   -no-reboot -monitor none -serial stdio -nographic     
@@ -120,7 +120,7 @@ this output without --coverage.
 RTEMS Testing - Tester, 4.12 (b047c7737e9d modified)
 Coverage analysis requested
 Traceback (most recent call last):
-...
+
 File "/home/cpod/development/rtems/test/rtems-tools/tester/rt/test.py", line 300, in run
     coverage = coverage.coverage_run(opts.defaults)
 File "/home/cpod/development/rtems/test/rtems-tools/tester/rt/coverage.py", line 285, in __init__
