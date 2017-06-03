@@ -131,7 +131,7 @@ KeyError: 'coverage'
 From this I figured that with --coverage removed test.py shouldn't call coverage.py at all. The problem is that there was
 an if statement that always seemed to be true, which was checked with a print statement.
 
-{% highlight python %}
+{% highlight %}
 coverage_enabled = opts.opts['coverage']
 if coverage_enabled:
             print('\nThis path is taken\n') # added by me to check if it always ran
