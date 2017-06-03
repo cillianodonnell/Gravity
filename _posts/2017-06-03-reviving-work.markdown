@@ -75,10 +75,12 @@ covoar/wscript. The answer to this was in the original patches and it was just m
 to track that down though.
 
 The next problem would result in my first real fix, another build error 
-{% highlight bash %}
+
+{% highlight %}
 rld-process.h:175:36: error: ‘strings’ in namespace ‘rld’ does not name a type
        void write_lines (const rld::strings& ss);
 {% endhighlight %}
+
 I had originally thought this was referring to the return type and I was changing const to void or removing it and none of that
 worked and after some advice from my mentor Joel on how to think about this so I could solve it myself, I realised it couldn't 
 find the definition of 'strings'. I detoured a bit trying to understand the waf build system as I thought the problem was in
@@ -89,9 +91,10 @@ rtemstoolkit/rld-process.h was submitted to rtems devel list and merged. After t
 Now it's time for a first run through the RTEMS Tester framework, the following command runs the testsuite for PC386 BSP
 with coverage enabled with the --coverage flag.
 
-{% highlight bash %}
+{% highlight %}
 $HOME/development/rtems/test/rtems-tools/tester/rtems-test --rtems-bsp=pc386 --coverage --log=log-pc386.log --rtems-tools=$HOME/development/rtems/4.12 $HOME/development/rtems/pc386/i386-rtems4.12/c/pc386/testsuites
 {% endhighlight %}
+
 There was an initial 'SyntaxError: Non-ASCII character '\xc4' in .../coverage.py' caused by a strange character from a Polish
 name of the 2014 student. Also rtems-test was originally looking for the executables at '...pc386/testsuites' as the previous
 student had listed but they are actually found at the longer path above '...pc386/i386-rtems4.12/c/pc386/testsuites'. These were
@@ -99,10 +102,12 @@ quickly fixed.
 
 The tests actually ran now. All 446 were invalid and defaulted to dry-run due to errors in qemu.cfg but it was nice to see a
 first run through nonetheless. The error consisted of the qemu command and all its options
-{% highlight bash %}
+
+{% highlight %}
 qemu.cfg:81: execute failed: qemu-system-i386 -m 128 -boot b... the rest of the options
 common and bsp specific ... tmtimer01.exe.cov: exit-code:2
 {% endhighlight %}
+
 This exit code meant something like directory or path not found, when the coverage flag was removed it had exit code: 1
 which is more of a general error but based on the context seems to amount to about the same thing here. By chance I moved
 the coverage flag to last place, just before the executable and strangely the qemu.cfg errors disappeared and the tests
@@ -111,7 +116,7 @@ all took some time to run (12 min for 13 sample tests vs 28s for 446 tests) and 
 However I noticed that coverage analysis tried to run whether the --coverage flag had been added or not, Leon 3 BSP showed
 this output without --coverage.
 
-{% highlight bash %}
+{% highlight %}
 RTEMS Testing - Tester, 4.12 (b047c7737e9d modified)
 Coverage analysis requested
 Traceback (most recent call last):
@@ -122,22 +127,24 @@ File "/home/cpod/development/rtems/test/rtems-tools/tester/rt/coverage.py", line
     self.config_map = self.macros.macros['coverage']
 KeyError: 'coverage'
 {% endhighlight %}
+
 From this I figured that with --coverage removed test.py shouldn't call coverage.py at all. The problem is that there was
 an if statement that always seemed to be true, which was checked with a print statement.
 
 {% highlight python %}
 coverage_enabled = opts.opts['coverage']
 if coverage_enabled:
-294             print('\nThis path is taken\n') # added by me to check if it always ran
-295             import coverage               
-296             from rtemstoolkit import check           
-297             log.notice("Coverage analysis requested")       
-298             opts.defaults.load('%%{_configdir}/coverage.mc')              
-299             if not check.check_exe('__covoar', opts.defaults['__covoar']):
-300                 raise error.general("Covoar not found!")   
-301             coverage = coverage.coverage_run(opts.defaults)
-302             coverage.prepareEnvironment()    
+            print('\nThis path is taken\n') # added by me to check if it always ran
+            import coverage               
+            from rtemstoolkit import check           
+            log.notice("Coverage analysis requested")       
+            opts.defaults.load('%%{_configdir}/coverage.mc')              
+            if not check.check_exe('__covoar', opts.defaults['__covoar']):
+                 raise error.general("Covoar not found!")   
+            coverage = coverage.coverage_run(opts.defaults)
+            coverage.prepareEnvironment()    
 {% endhighlight %}
+
 So I checked coverage_enabled and it was printing 1 for --coverage and 0 wothout --coverage. Which should be a proxy for
 true and false and if coverage_enabled should check automatically check for true, I'm not sure why it didn't but I solved it
 by explicitly asking it to check 'if coverage_enabled == True:' This solution worked again for the next traceback
