@@ -10,7 +10,7 @@ title: The Summer of RTEMS
 email: cpodonnell8@gmail.com
 description: Coverage Analysis Tools Development
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://yourdomain.com" # the base hostname & protocol for your site
+url: "https://cillianodonnell.github.io/" # the base hostname & protocol for your site
 #twitter_username: hemang_kumar
 github_username:  cillianodonnell
 paginate: 5
