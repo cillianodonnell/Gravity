@@ -85,7 +85,7 @@ I had originally thought this was referring to the return type and I was changin
 worked and after some advice from my mentor Joel on how to think about this so I could solve it myself, I realised it couldn't 
 find the definition of 'strings'. I detoured a bit trying to understand the waf build system as I thought the problem was in
 covoar/wscript and some linking mechanism there before solving it by adding '#include "rld.h"' to rld-process.h ( I had tried
-#include <rld.h> earlier, not realising this was incorrect syntax and then went on the wscript detour). This fix in
+#include \<rld.h\> earlier, not realising this was incorrect syntax and then went on the wscript detour). This fix in
 rtemstoolkit/rld-process.h was submitted to rtems devel list and merged. After this the build was successful.
 
 Now it's time for a first run through the RTEMS Tester framework, the following command runs the testsuite for PC386 BSP
