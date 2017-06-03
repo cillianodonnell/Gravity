@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Reviving The Old RTEMS Tester Work"
-date:   2017-06-03 19:45:31 +0530
+date:   2017-06-03 19:50:31 +0530
 categories: rtems
 ---
 The first thing I did is learn how to use git. The workflow I settled on is keep a pristine RTEMS master and make a branch
