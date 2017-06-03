@@ -145,8 +145,8 @@ if coverage_enabled:
             coverage.prepareEnvironment()    
 {% endhighlight %}
 
-So I checked coverage_enabled and it was printing 1 for --coverage and 0 wothout --coverage. Which should be a proxy for
-true and false and if coverage_enabled should check automatically check for true, I'm not sure why it didn't but I solved it
+So I checked coverage_enabled and it was printing 1 for --coverage and 0 without --coverage. Which should be a proxy for
+true and false and if coverage_enabled should automatically check for true, I'm not sure why it didn't but I solved it
 by explicitly asking it to check 'if coverage_enabled == True:' This solution worked again for the next traceback
 'UnboundLocalError: local variable 'coverage' referenced before assignment' another if statement was always true.
 
@@ -189,7 +189,7 @@ This is the current state of the project.
 
 I know that some of these problems might seem trivial to some people reading this and I think that some of them were quite 
 simple when I look back on them too. However as a novice they took me quite some time to figure out exactly what was
-happening and to find these simple answers. So I'm recording the development process as it was and not how I would of liked
+happening and to find these simple answers. So I'm recording the development process as it was and not how I would've liked
 it to have been.
 
 [google-python-tutorial]: https://developers.google.com/edu/python/
