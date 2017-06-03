@@ -38,7 +38,7 @@ recent, both seemed to work.
 At this stage I didn't understand things too well so when presented with two choices from each work I might just pick one
 and see how it went. For instance in rt/test.py:
 
-{% highlight %}
+{% highlight python %}
 coverage_enabled = opts.opts['coverage']
 # or I could use
 coverage_enabled = opts.coverage()
@@ -50,7 +50,7 @@ could just print this at runtime, although there was nothing to run yet so maybe
 
 Or again from tester/rtems/testing/gdb.cfg:
 
-{% highlight %}
+{% highlight bash %}
 %if %{_coverage}
 # or I could use
 %if %{defined _coverage}
@@ -60,7 +60,7 @@ I used the first one and it later turned into a runtime error on rtems-test (RTE
 
 Similar choices in qemu.cfg and I have yet to decide which options would be best in there.
 
-{% highlight %}
+{% highlight bash %}
 # So far all 3 options leave runtime errors and I suspect it is the bsp qemu 
 # options causing the problems.
 #%define qemu_opts_base   -no-reboot -monitor none -serial stdio -nographic     
@@ -76,7 +76,7 @@ to track that down though.
 
 The next problem would result in my first real fix, another build error 
 
-{% highlight %}
+{% highlight bash %}
 rld-process.h:175:36: error: ‘strings’ in namespace ‘rld’ does not name a type
        void write_lines (const rld::strings& ss);
 {% endhighlight %}
@@ -91,7 +91,7 @@ rtemstoolkit/rld-process.h was submitted to rtems devel list and merged. After t
 Now it's time for a first run through the RTEMS Tester framework, the following command runs the testsuite for PC386 BSP
 with coverage enabled with the --coverage flag.
 
-{% highlight %}
+{% highlight bash %}
 $HOME/development/rtems/test/rtems-tools/tester/rtems-test --rtems-bsp=pc386 --coverage --log=log-pc386.log --rtems-tools=$HOME/development/rtems/4.12 $HOME/development/rtems/pc386/i386-rtems4.12/c/pc386/testsuites
 {% endhighlight %}
 
@@ -103,7 +103,7 @@ quickly fixed.
 The tests actually ran now. All 446 were invalid and defaulted to dry-run due to errors in qemu.cfg but it was nice to see a
 first run through nonetheless. The error consisted of the qemu command and all its options
 
-{% highlight %}
+{% highlight bash %}
 qemu.cfg:81: execute failed: qemu-system-i386 -m 128 -boot b... the rest of the options
 common and bsp specific ... tmtimer01.exe.cov: exit-code:2
 {% endhighlight %}
@@ -116,11 +116,11 @@ all took some time to run (12 min for 13 sample tests vs 28s for 446 tests) and 
 However I noticed that coverage analysis tried to run whether the --coverage flag had been added or not, Leon 3 BSP showed
 this output without --coverage.
 
-{% highlight %}
+{% highlight bash %}
 RTEMS Testing - Tester, 4.12 (b047c7737e9d modified)
 Coverage analysis requested
 Traceback (most recent call last):
-
+...
 File "/home/cpod/development/rtems/test/rtems-tools/tester/rt/test.py", line 300, in run
     coverage = coverage.coverage_run(opts.defaults)
 File "/home/cpod/development/rtems/test/rtems-tools/tester/rt/coverage.py", line 285, in __init__
@@ -131,7 +131,7 @@ KeyError: 'coverage'
 From this I figured that with --coverage removed test.py shouldn't call coverage.py at all. The problem is that there was
 an if statement that always seemed to be true, which was checked with a print statement.
 
-{% highlight %}
+{% highlight python %}
 coverage_enabled = opts.opts['coverage']
 if coverage_enabled:
             print('\nThis path is taken\n') # added by me to check if it always ran
@@ -154,7 +154,7 @@ Now with no --coverage the tests actually have what looks to be a reasonable set
 been insulated from the new coverage work, so at least it isn't breaking anything that is already there. This is true for 
 Leon 2 and Leon 3. PC386 is only supported by the new coverage work so it isn't working yet.
 
-{% highlight %}
+{% highlight bash %}
 RTEMS Testing - Tester, 4.12 (b047c7737e9d modified)
 [ 3/13] p:0  f:0  u:0  e:0  I:0  B:0  t:0  i:0  | sparc/leon3: cdtest.exe
 [ 2/13] p:0  f:0  u:0  e:0  I:0  B:0  t:0  i:0  | sparc/leon3: capture.exe
