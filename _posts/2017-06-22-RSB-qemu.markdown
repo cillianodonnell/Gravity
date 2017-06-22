@@ -31,7 +31,7 @@ The -1 at the end of the file keeps track of the version of the config file.
 
 The main changes to the original qemu files were:
 
-  1. source-builder/config/couverture-qemu-2-1.cfg
+   **source-builder/config/couverture-qemu-2-1.cfg**
 
 {% highlight bash %}
 /*
@@ -60,7 +60,7 @@ The main changes to the original qemu files were:
 --disable-docs
 {% endhighlight %}
 
-  2. bare/config/devel/couverture-qemu-git-1.cfg
+   **bare/config/devel/couverture-qemu-git-1.cfg**
 
 {% highlight bash %}
 /*
@@ -77,7 +77,7 @@ The main changes to the original qemu files were:
 %source set qemu https://github.com/AdaCore/qemu/archive/%{qemu_version}.tar.gz
 {% endhighlight %}
 
-  3. bare/config/devel/couverture-qemu.bset
+  **bare/config/devel/couverture-qemu.bset**
 
 {% highlight bash %}
 /* 
