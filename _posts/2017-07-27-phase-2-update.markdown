@@ -37,52 +37,52 @@ out. After a few late nights, I emailed the devel list with my understanding so 
 {% highlight bash %}
 *** Trace block is inconsistent with coverage map
 *** Trace block (0x4000c2cc - 0x4000c2ec) for 36 bytes
-*** Coverage map /home/cpod/coverage_test/leon3/coverage/base_sp.exe.cov
+*** Coverage map /home/cpod/coverage test/leon3/coverage/base sp.exe.cov
 
------------------------------
+  -----------------------------
 
 The coverage map is 24 bytes:
 
-(gdb) p/x *entry
+(gdb) p/x entry
 $2 = {pc = 0x4000c2cc, size = 0x24, op = 0x12}
 
------------------------------
+  -----------------------------
 
 The disassembly block in question is:
 
-4000c2cc <_Objects_Get_information_id>:
+4000c2cc < Objects Get information id>:
 4000c2cc:   83 32 20 18     srl  %o0, 0x18, %g1
 
-Objects_Information *_Objects_Get_information_id(
-  Objects_Id  id
+Objects Information * Objects Get information id(
+  Objects Id  id
 )
 {
-  return _Objects_Get_information(
+  return  Objects Get information(
 4000c2d0:   93 32 20 1b     srl  %o0, 0x1b, %o1
 4000c2d4:   90 08 60 07     and  %g1, 7, %o0
 4000c2d8:   82 13 c0 00     mov  %o7, %g1
-4000c2dc:   40 00 00 02     call  4000c2e4 <_Objects_Get_information>
+4000c2dc:   40 00 00 02     call  4000c2e4 < Objects Get information>
 4000c2e0:   9e 10 40 00     mov  %g1, %o7
 
-4000c2e4 <_Objects_Get_information>:
+4000c2e4 < Objects Get information>:
 
-Objects_Information *_Objects_Get_information(
-  Objects_APIs   the_api,
-  uint16_t       the_class
+Objects Information * Objects Get information(
+  Objects APIs   the api,
+  uint16 t       the class
 )
 {
 4000c2e4:   9d e3 bf a0     save  %sp, -96, %sp
-  Objects_Information *info;
-  int the_class_api_maximum;
+  Objects Information info;
+  int the class api maximum;
 
-  if ( !the_class )
+  if ( !the class )
 4000c2e8:   80 a6 60 00     cmp  %i1, 0
-4000c2ec:   02 80 00 19     be  4000c350 <_Objects_Get_information+0x6c>
+4000c2ec:   02 80 00 19     be  4000c350 < Objects Get information+0x6c>
 4000c2f0:   01 00 00 00     nop
 
-------------------------------------
+  ------------------------------------
 
-I have checked this out on base_sp.exe and ticker.exe where the same
+I have checked this out on base sp.exe and ticker.exe where the same
 inconsistency appears in both. Couverture-QEMU decides the trace block
 encompasses that entire block
 
@@ -105,13 +105,13 @@ If there is a match for all 3 items then this is a new function
 So the objdump above is always processed as 2 seperate sections.
 
 One for:
-4000c2cc <_Objects_Get_information_id>:
+4000c2cc < Objects Get information id>:
 
 
 And one for:
-4000c2e4 <_Objects_Get_information>:
+4000c2e4 < Objects Get information>:
 
-The size from Objects_Get_information_id to Objects_Get_information is
+The size from Objects Get information id to Objects Get information is
 24 bytes which is the coverage map.
 The size of both functions combined is 36 bytes which is the
 Couverture trace block.
