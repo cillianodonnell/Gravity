@@ -1,7 +1,7 @@
 ---                                                                             
 layout: post                                                                    
 title:  "Phase 2 Update"                                    
-date:   2017-07-26 13:41:00                                              
+date:   2017-07-26 18:04:00                                              
 categories: rtems, gsoc                                                     
 --- 
 I waited for this update as the first half of the month just consisted of trying
