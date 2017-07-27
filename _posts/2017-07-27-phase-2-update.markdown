@@ -35,9 +35,9 @@ problem and learned to use GDB in a one to one with my mentor Joel to figure it
 out. After a few late nights, I emailed the devel list with my understanding so far..
 
 {% highlight bash %}
-*** Trace block is inconsistent with coverage map
-*** Trace block (0x4000c2cc - 0x4000c2ec) for 36 bytes
-*** Coverage map /home/cpod/coverage test/leon3/coverage/base sp.exe.cov
+ Trace block is inconsistent with coverage map
+ Trace block (0x4000c2cc - 0x4000c2ec) for 36 bytes
+ Coverage map /home/cpod/coverage test/leon3/coverage/base sp.exe.cov
 
   -----------------------------
 
