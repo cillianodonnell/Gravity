@@ -1,6 +1,6 @@
 ---                                                                             
 layout: post                                                                    
-title:  "Phase 2 update"                                    
+title:  "Phase 2 Update"                                    
 date:   2017-07-26 13:41:00                                              
 categories: rtems, gsoc                                                     
 --- 
@@ -11,7 +11,7 @@ was on holidays for a week, so it didn't seem like there was much to write
 about. Nonetheless I want to give an quick overview about what went on.
 
 It started just going back and forth in emails with Frederic Konrad from the 
-Coverture-qemu project and doing a bit of testing. I struggled to fix the
+Couverture-Qemu project and doing a bit of testing. I struggled to fix the
 compile issues and Frederic solved them in a couple of hours what I couldn't do
 for days. Quite impressive and it just goes to show how far I have to go to 
 become a professional developer. It then seemed like I needed to hear back from
@@ -123,9 +123,9 @@ this.
 {% endhighlight %}
 
 After a bit of back and forth email with Joel, we decided this was too 
-retrictive a check and not really neccessary. This section was removed and I
+restrictive a check and not really neccessary. This section was removed and I
 checked if we were getting sensible results. Sure enough the section marked
-not taken in the coverae map were the same as the branches marked '0x12' by
+not taken in the coverage map was the same as the branch marked '0x12' by
 couverture-qemu which is a bitmap detailing 'branch fully exectuted' and 'branch
 not taken'. The taken branches are op code 0x11.
 
