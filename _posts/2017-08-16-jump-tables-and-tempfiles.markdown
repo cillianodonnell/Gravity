@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Jump Tables a Recurring Problem."
-date:   2017-08-16 18:04:00
+date:   2017-08-16 19:04:00
 categories: rtems, gsoc
 ---
 Another long delay in updates as I've spent so much time on fixing one simple
@@ -11,11 +11,11 @@ show for the time spent. The amount of code needed to solve the problem was
 minimal. As with all the other phases of the project I've spent most of my time
 figuring out how the pieces of the puzzle fit together and reading other peoples
 code. This may be just the nature of large coding projects, as opposed to small
-college projects where a lot of code is written and there is no interaction in
-with exisitng code.
+college projects where a lot of code is written and there is no interaction
+with existing code.
 
 INFO messages, that were once error messages, would appear showing size
-mismatches in the same symbols from different exe's would appear.
+mismatches in the same symbols from different exe's.
 
 {% highlight bash %}
 INFO: DesiredSymbols::createCoverageMap - Attempt to create unified
@@ -106,7 +106,7 @@ fsrfsbitmap01.exe  92 bytes
 {% endhighlight %}
 
 As can be seen above a jump table is added to the symbol
-<TOD_TICKS_PER_SECOND_method> in fsrfsbitmap01.exe which creates the byte
+TOD_TICKS_PER_SECOND_method in fsrfsbitmap01.exe which creates the byte
 size discrepancy as the code that is processing this is looking for the next
 symbol to start to finalise the current symbol as the (new symbols address - 1).
 
@@ -150,7 +150,7 @@ symbol to start to finalise the current symbol as the (new symbols address - 1).
 484
 485        /*
 486         * See if the new symbol is one that we care about.
-487         */
+487        \*/
 488         if ( SymbolsToAnalyze->isDesired( symbol ) ) {
 489           startAddress = executableInformation->getLoadAddress() + offset;
 490           currentSymbol = symbol;
@@ -160,7 +160,8 @@ symbol to start to finalise the current symbol as the (new symbols address - 1).
 494       }
 {% endhighlight %}
 
-The other processing statement detect normal lines of a symbol
+The other processing statement detects regular instruction lines from the body
+of a symbol.
 
 {% highlight c++ %}
       else if (processSymbol) {
@@ -190,15 +191,15 @@ The other processing statement detect normal lines of a symbol
 
 The problem was to come up with a check that was restrictive enough to catch all
 jump tables but not too retrictive that it cuts symbols short. It looked as if
-checking just for '\__end' would be good enough and did chop the jump tables at
-the correct location but I later realised that the branch information had
-disappeared in the report. It must have been too loose and chopping things up in
+checking just for '\__end' would be good enough and it did chop the jump tables
+at the correct location but I later realised that the branch information had
+disappeared in the report. It must have been too loose and chopping lines up in
 other places as well.
 
 There were also other jump tables that didn't have this structure so what ended
-up being universal was 'call' and '+0x' were all found in each. Along with the
-normal checks for an instruction line, if all 5 were found it was a jump table.
-The symbol could then be finalised as normal. We also needed to set
+up being universal was 'call' and '+0x' were all found in all tables. Along with
+the normal checks for an instruction line, if all 5 were found it was a jump
+table. The symbol could then be finalised as normal. We also needed to set
 processSymbol = false, which keeps track if we are in the middle of a symbol
 or finished with it. Then along with the 5 items checked, we check processSymbol
 to make sure only one line of the jump table is processed and then nothing is
