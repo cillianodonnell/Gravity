@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "GSOC: Final Report"
-date:   2017-08-26 19:04:00
+date:   2017-08-26 23:04:00
 categories: rtems, gsoc
 ---
 ## Introduction ##
@@ -20,20 +20,20 @@ in the current qemu build.
 1. A general config file in source-builder/config. This contains the general
 configure and build instructions (for say version 2.x.x release).
 
-[couverture-qemu-2-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/source-builder/config/couverture-qemu-2-1.cfg)
+  [couverture-qemu-2-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/source-builder/config/couverture-qemu-2-1.cfg)
 
 
 2. More specific version config file in bare/config/devel which contains the
 source location and any patches that need to be applied before configuring
 (for say version 2.4.1)
 
-[couverture-qemu-git-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/bare/config/devel/couverture-qemu-git-1.cfg)
+  [couverture-qemu-git-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/bare/config/devel/couverture-qemu-git-1.cfg)
 
 
 3. A .bset in bare/config/devel which specifies all the dependencies and the
 order in which to build them.
 
-[couverture-qemu.bset](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/bare/config/devel/couverture-qemu.bset)
+  [couverture-qemu.bset](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/bare/config/devel/couverture-qemu.bset)
 
 
 This build is working, tested and ready for use since the end of June.
@@ -68,7 +68,7 @@ from the coverage map. It was deemed to be too restrictive a check and removed.
 This is a very simple fix but there was a lot of detective work in GDB to make
 that decision. I also had to learn GDB to do it :)
 
-[commit](https://github.com/cillianodonnell/Final-GSOC/commit/4a2975825404aaf391fb36d35640a8acd7bdb490)
+  [commit](https://github.com/cillianodonnell/Final-GSOC/commit/4a2975825404aaf391fb36d35640a8acd7bdb490)
 
 2. The next problem was some executables had jump tables added to the end of
 symbols in their objdump, while others did not add these for the same symbols.
@@ -80,59 +80,59 @@ randomly added. My fix for this was finding something suitably specific,
 new symbol and a further 2 to distinguish a jump table from a regular
 instruction.
 
-{% highlight c++ %}
-436      /*
-437       * See if it is a jump table.
-438       */
-439       found = sscanf(
-440         line.c\_str(),
-441         "%x%c\t%\*[^\t]%c%s %*x %*[^+]%s",
-442         &instructionOffset, &terminatorOne, &terminator2, instruction, ID
-443       );
-444       call = instruction;
-445       jumpTableID = ID;
-{% endhighlight %}
+  {% highlight c++ %}
+  436      /*
+  437       * See if it is a jump table.
+  438       */
+  439       found = sscanf(
+  440         line.c\_str(),
+  441         "%x%c\t%\*[^\t]%c%s %*x %*[^+]%s",
+  442         &instructionOffset, &terminatorOne, &terminator2, instruction, ID
+  443       );
+  444       call = instruction;
+  445       jumpTableID = ID;
+  {% endhighlight %}
 
 This gathered the line data and then a check for 'call' and '+0x' turned out to
 be the common denominator in the different kind of jump tables. The symbol is
 finalised and the processSymbol variable set to false so no other lines of the
 jump table will be processed.
 
-{% highlight c++ %}
-495      /*
-496       * If it looks like a jump table...
-497       */
-498       else if ( (found == 5) && (terminatorOne == ':') && (terminator2 == '\t')
-499                && (call.find( "call" ) != std::string::npos)
-500                && (jumpTableID.find( "+0x" ) != std::string::npos)
-501                && processSymbol )
-502       {
-503
-504           endAddress = executableInformation->getLoadAddress() + offset - 1;
-505
-506          /*
-507           * If we are currently processing a symbol, finalize it.
-508           */
-509           if ( processSymbol ) {
-510             finalizeSymbol(
-511               executableInformation,
-512               currentSymbol,
-513               startAddress,
-514               endAddress,
-515               theInstructions
-516             );
-517           }
-518           processSymbol = false;
-519       }
-{% endhighlight %}
+  {% highlight c++ %}
+  495      /*
+  496       * If it looks like a jump table...
+  497       */
+  498       else if ( (found == 5) && (terminatorOne == ':') && (terminator2 == '\t')
+  499                && (call.find( "call" ) != std::string::npos)
+  500                && (jumpTableID.find( "+0x" ) != std::string::npos)
+  501                && processSymbol )
+  502       {
+  503
+  504           endAddress = executableInformation->getLoadAddress() + offset - 1;
+  505
+  506          /*
+  507           * If we are currently processing a symbol, finalize it.
+  508           */
+  509           if ( processSymbol ) {
+  510             finalizeSymbol(
+  511               executableInformation,
+  512               currentSymbol,
+  513               startAddress,
+  514               endAddress,
+  515               theInstructions
+  516             );
+  517           }
+  518           processSymbol = false;
+  519       }
+  {% endhighlight %}
 
 The full commit for this fix is:
-[commit](https://github.com/cillianodonnell/Final-GSOC/commit/90f879cc99a3a5141842e1f7b6bf1d0c923ef84f)
+  [commit](https://github.com/cillianodonnell/Final-GSOC/commit/90f879cc99a3a5141842e1f7b6bf1d0c923ef84f)
 
 
 3. The objdump files used to gather symbol information would be left lying
 around in the event of a crash. This was a merge blocker, the solution is to
-use rld::process::tempfile for the onjdump files and rld::process::execute to
+use rld::process::tempfile for the objdump files and rld::process::execute to
 run objdump for the chosen architecture which also removes the need for a pipe
 to sed. These classes are part of rtemstoolkit which is a collection of best
 practices for a number of procedures written in C++. I learned to use these and
@@ -234,12 +234,12 @@ symbols of interest for that set. nm is not portable and so must be removed.
 The fix for this is use rtemstoolkit and generate the list of symbols from the
 ELF files.
 
-[nm use](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/covoar/SymbolSet.cpp#L98)
+  [nm use](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/covoar/SymbolSet.cpp#L98)
 
 2. There is also a use of addr2line piped to dos2unix to get find the source
 lines which match the objdump instruction lines.
 
-[addr2line use](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/covoar/DesiredSymbols.cc#L466)
+  [addr2line use](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/covoar/DesiredSymbols.cc#L466)
 
 3. The trace files that are generated by QEMU as each test is run in RTEMS
 Tester need to stay for later use by covoar which runs after the testsuite is
@@ -249,7 +249,7 @@ the same way as the other tempfiles as they are not generated by covoar. These
 files have a .cov ending and are currently generated beside the executable they
 match in the build tree.
 
-[current cleanup](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/rt/coverage.py#L380)
+  [current cleanup](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/rt/coverage.py#L380)
 
 4. covoar needs to detect target architecture internally (e.g sparc-rtems4.12),
 this can be done with get_exec_prefix() from rld-cc.h in rtemstoolkit.
@@ -265,18 +265,18 @@ to see what percentage of them the testsuite covers.
 ## Documentation ##
 1. The details of how to use the RTEMS Source Builder to build Couverture-QEMU:
 
-[How to Build Couverture-QEMU](https://devel.rtems.org/wiki/GSoC/2017/coveragetools#BuildingCouverture-QemuwiththeRSB)
+  [How to Build Couverture-QEMU](https://devel.rtems.org/wiki/GSoC/2017/coveragetools#BuildingCouverture-QemuwiththeRSB)
 
 
 2. Instructions on how to use the coverage analysis tools and generate reports
 for symbol sets of your choice:
 
-[How to use the Coverage Tools](https://devel.rtems.org/wiki/GSoC/2017/coveragetools#CoverageAnalysisinRTEMSTester)
+  [How to use the Coverage Tools](https://devel.rtems.org/wiki/GSoC/2017/coveragetools#CoverageAnalysisinRTEMSTester)
 
 Short status updates for each week of the GSOC project:
 
-[Weekly status updates](https://devel.rtems.org/wiki/GSoC/2017#CillianODonnell)
+  [Weekly status updates](https://devel.rtems.org/wiki/GSoC/2017#CillianODonnell)
 
 Longer blog posts detailing specific problems and their solutions:
 
-[Development Blog](https://cillianodonnell.github.io/index.html)
+  [Development Blog](https://cillianodonnell.github.io/index.html)
