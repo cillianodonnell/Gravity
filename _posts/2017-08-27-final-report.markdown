@@ -264,6 +264,11 @@ is currently in a non standard format, created just for it. This file contains
 the sets of libraries of symbols and groups them together to be treated as a set
 to see what percentage of them the testsuite covers.
 
+* Generate XML reports. Currently the tools generate html and text reports.
+
+* Generate Gcov reports. There is Gcov support in covoar that is not currently
+working.
+
 ## Documentation ##
 * The details of how to use the RTEMS Source Builder to build Couverture-QEMU:
 
