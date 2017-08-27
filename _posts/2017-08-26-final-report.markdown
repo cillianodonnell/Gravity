@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "GSOC: Final Report"
-date:   2017-08-26 19:04:00
+date:   2017-08-27 10:04:00
 categories: rtems, gsoc
 ---
 ## Introduction ##
@@ -17,23 +17,23 @@ build this version of qemu in a way that is tested and known to work with RTEMS.
 The RSB build consists of 3 files, the blueprint of which was already present
 in the current qemu build.
 
-1. A general config file in source-builder/config. This contains the general
+* A general config file in source-builder/config. This contains the general
 configure and build instructions (for say version 2.x.x release).
 
-  [couverture-qemu-2-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/source-builder/config/couverture-qemu-2-1.cfg)
+[couverture-qemu-2-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/source-builder/config/couverture-qemu-2-1.cfg)
 
 
-2. More specific version config file in bare/config/devel which contains the
+* More specific version config file in bare/config/devel which contains the
 source location and any patches that need to be applied before configuring
 (for say version 2.4.1)
 
-  [couverture-qemu-git-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/bare/config/devel/couverture-qemu-git-1.cfg)
+[couverture-qemu-git-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/bare/config/devel/couverture-qemu-git-1.cfg)
 
 
-3. A .bset in bare/config/devel which specifies all the dependencies and the
+* A .bset in bare/config/devel which specifies all the dependencies and the
 order in which to build them.
 
-  [couverture-qemu.bset](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/bare/config/devel/couverture-qemu.bset)
+[couverture-qemu.bset](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/bare/config/devel/couverture-qemu.bset)
 
 
 This build is working, tested and ready for use since the end of June.
@@ -63,14 +63,14 @@ documentation from the previous students.
 After I had things working again, there are 3 main fixes that account for my
 main contributions. The 3 fixes are detailed below.
 
-1. There was a check for if the qemu trace branch equaled the size of the symbol
+* There was a check for if the qemu trace branch equaled the size of the symbol
 from the coverage map. It was deemed to be too restrictive a check and removed.
 This is a very simple fix but there was a lot of detective work in GDB to make
 that decision. I also had to learn GDB to do it :)
 
-  [commit](https://github.com/cillianodonnell/Final-GSOC/commit/4a2975825404aaf391fb36d35640a8acd7bdb490)
+[commit](https://github.com/cillianodonnell/Final-GSOC/commit/4a2975825404aaf391fb36d35640a8acd7bdb490)
 
-2. The next problem was some executables had jump tables added to the end of
+* The next problem was some executables had jump tables added to the end of
 symbols in their objdump, while others did not add these for the same symbols.
 This created a discrepancy in their size when comparing and checking those
 symbols. Each executables objdump is processed and symbols are picked out by
@@ -127,10 +127,10 @@ jump table will be processed.
   {% endhighlight %}
 
 The full commit for this fix is:
-  [commit](https://github.com/cillianodonnell/Final-GSOC/commit/90f879cc99a3a5141842e1f7b6bf1d0c923ef84f)
+[commit](https://github.com/cillianodonnell/Final-GSOC/commit/90f879cc99a3a5141842e1f7b6bf1d0c923ef84f)
 
 
-3. The objdump files used to gather symbol information would be left lying
+* The objdump files used to gather symbol information would be left lying
 around in the event of a crash. This was a merge blocker, the solution is to
 use rld::process::tempfile for the objdump files and rld::process::execute to
 run objdump for the chosen architecture which also removes the need for a pipe
@@ -229,19 +229,19 @@ The RTEMS Tester integration is working and very close to merging but there are
 still a few things that need to change before it is accepted. The main blockers
 are as follows.
 
-1. nm is used to generate a list of symbols in a file that is referenced as the
+* nm is used to generate a list of symbols in a file that is referenced as the
 symbols of interest for that set. nm is not portable and so must be removed.
 The fix for this is use rtemstoolkit and generate the list of symbols from the
 ELF files.
 
-  [nm use](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/covoar/SymbolSet.cpp#L98)
+[nm use](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/covoar/SymbolSet.cpp#L98)
 
-2. There is also a use of addr2line piped to dos2unix to get find the source
+* There is also a use of addr2line piped to dos2unix to get find the source
 lines which match the objdump instruction lines.
 
-  [addr2line use](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/covoar/DesiredSymbols.cc#L466)
+[addr2line use](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/covoar/DesiredSymbols.cc#L466)
 
-3. The trace files that are generated by QEMU as each test is run in RTEMS
+* The trace files that are generated by QEMU as each test is run in RTEMS
 Tester need to stay for later use by covoar which runs after the testsuite is
 finished. They are currently cleared up by a try finally statement in python,
 which works for Ctrl+C exit but probably not SIGTERM. This cannot be handled
@@ -249,34 +249,34 @@ the same way as the other tempfiles as they are not generated by covoar. These
 files have a .cov ending and are currently generated beside the executable they
 match in the build tree.
 
-  [current cleanup](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/rt/coverage.py#L380)
+[current cleanup](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/rt/coverage.py#L380)
 
-4. covoar needs to detect target architecture internally (e.g sparc-rtems4.12),
+* covoar needs to detect target architecture internally (e.g sparc-rtems4.12),
 this can be done with get_exec_prefix() from rld-cc.h in rtemstoolkit.
 
 
 Some further improvements that would be nice to make but not merge blockers are:
 
-1. Convert the symbol_sets.cfg file to the INI format. The symbol_sets.cfg file
+* Convert the symbol_sets.cfg file to the INI format. The symbol_sets.cfg file
 is currently in a non standard format, created just for it. This file contains
 the sets of libraries of symbols and groups them together to be treated as a set
 to see what percentage of them the testsuite covers.
 
 ## Documentation ##
-1. The details of how to use the RTEMS Source Builder to build Couverture-QEMU:
+* The details of how to use the RTEMS Source Builder to build Couverture-QEMU:
 
-  [How to Build Couverture-QEMU](https://devel.rtems.org/wiki/GSoC/2017/coveragetools#BuildingCouverture-QemuwiththeRSB)
+[How to Build Couverture-QEMU](https://devel.rtems.org/wiki/GSoC/2017/coveragetools#BuildingCouverture-QemuwiththeRSB)
 
 
-2. Instructions on how to use the coverage analysis tools and generate reports
+* Instructions on how to use the coverage analysis tools and generate reports
 for symbol sets of your choice:
 
-  [How to use the Coverage Tools](https://devel.rtems.org/wiki/GSoC/2017/coveragetools#CoverageAnalysisinRTEMSTester)
+[How to use the Coverage Tools](https://devel.rtems.org/wiki/GSoC/2017/coveragetools#CoverageAnalysisinRTEMSTester)
 
 Short status updates for each week of the GSOC project:
 
-  [Weekly status updates](https://devel.rtems.org/wiki/GSoC/2017#CillianODonnell)
+[Weekly status updates](https://devel.rtems.org/wiki/GSoC/2017#CillianODonnell)
 
 Longer blog posts detailing specific problems and their solutions:
 
-  [Development Blog](https://cillianodonnell.github.io/index.html)
+[Development Blog](https://cillianodonnell.github.io/index.html)
