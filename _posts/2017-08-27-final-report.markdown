@@ -38,12 +38,13 @@ order in which to build them.
 
 This build is working, tested and ready for use since the end of June.
 However there is a set of 3 patches for Leon3 from Gaisler that would be
-applied in file 2 above. I have been working to get those patches merged into
-upstream QEMU master with an Ada Core developer Frederic Konrad. I'm waiting to
-submit this RSB build to RTEMS devel list until the Gaisler patches are merged
-upstream. I believe the ideas from the patches were already applied to
-Couverture-QEMU but for some reason never made it into upstream QEMU but just
-to be sure I'll wait until its merged and test the 2 qemu's against each other.
+applied in couverture-qemu-git-1.cfg file above. I have been working to get
+those patches merged into upstream QEMU master with an Ada Core developer
+Frederic Konrad. I'm waiting to submit this RSB build to RTEMS devel list until
+the Gaisler patches are merged upstream. I believe the ideas from the patches
+were already applied to Couverture-QEMU but for some reason never made it into
+upstream QEMU but just to be sure I'll wait until its merged and test the 2
+qemu's against each other.
 
 ## Coverage Analysis Tools ##
 The coverage tools are working very well, they generate reports for the
@@ -130,16 +131,16 @@ The full commit for this fix is:
 [commit](https://github.com/cillianodonnell/Final-GSOC/commit/90f879cc99a3a5141842e1f7b6bf1d0c923ef84f)
 
 
-* The objdump files used to gather symbol information would be left lying
-around in the event of a crash. This was a merge blocker, the solution is to
-use rld::process::tempfile for the objdump files and rld::process::execute to
-run objdump for the chosen architecture which also removes the need for a pipe
-to sed. These classes are part of rtemstoolkit which is a collection of best
-practices for a number of procedures written in C++. I learned to use these and
-implemented both. Tempfile class is then used to open, read and write to the
-files. It has an integrated tempfiles clean up procedure, which was added with
-a fatal signals check in covoar, which would always call the tempfile clean
-up routine.
+* The final fix is that the objdump files used to gather symbol information
+would be left lying around in the event of a crash. This was a merge blocker,
+the solution is to use rld::process::tempfile for the objdump files and
+rld::process::execute to run objdump for the chosen architecture which also
+removes the need for a pipe to sed. These classes are part of rtemstoolkit
+which is a collection of best practices for a number of procedures written in
+C++. I learned to use these and implemented both. Tempfile class is then used
+to open, read and write to the files. It has an integrated tempfiles clean up
+procedure, which was added with a fatal signals check in covoar, which would
+always call the tempfile clean up routine in the event of a crash.
 
 The following is the rewrite of the getFile function in ObjdumpProcessor.cc
 which handled the production of the objdump tempfiles. This is the centre of
@@ -236,8 +237,9 @@ ELF files.
 
 [nm use](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/covoar/SymbolSet.cpp#L98)
 
-* There is also a use of addr2line piped to dos2unix to get find the source
-lines which match the objdump instruction lines.
+* There is also a use of addr2line piped to dos2unix to find the source
+lines which match the objdump instruction lines. Again we want to limit the use
+of external tools that are not portable across platforms.
 
 [addr2line use](https://github.com/cillianodonnell/Final-GSOC/blob/coverage-patches/tester/covoar/DesiredSymbols.cc#L466)
 
