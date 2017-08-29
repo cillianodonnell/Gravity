@@ -266,8 +266,13 @@ to see what percentage of them the testsuite covers.
 
 * Generate XML reports. Currently the tools generate html and text reports.
 
-* Generate Gcov reports. There is Gcov support in covoar that is not currently
-working.
+* Generate Gcov reports. There is Gcov support in covoar that is close to
+working but the gcov output generated is not trusted. The fix for this would
+involve vaildating the Gcov output to make sure it is in a format that the Gcov
+program accepts.
+
+* Combine how-to documentation below with existing covoar docs to make a ReST
+format doc thats integrated with the main RTEMS Tester docs.
 
 ## Documentation ##
 * The details of how to use the RTEMS Source Builder to build Couverture-QEMU:
