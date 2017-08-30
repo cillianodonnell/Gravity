@@ -20,20 +20,20 @@ in the current qemu build.
 * A general config file in source-builder/config. This contains the general
 configure and build instructions (for say version 2.x.x release).
 
-[couverture-qemu-2-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/source-builder/config/couverture-qemu-2-1.cfg)
+[couverture-qemu-2-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/commit/2715053acb9813079fc8d55acc99ed3cf79bd0e1)
 
 
 * More specific version config file in bare/config/devel which contains the
 source location and any patches that need to be applied before configuring
 (for say version 2.4.1)
 
-[couverture-qemu-git-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/bare/config/devel/couverture-qemu-git-1.cfg)
+[couverture-qemu-git-1.cfg](https://github.com/cillianodonnell/rtems-source-builder/commit/4315ee5f66eb1abb442b48684eccab55ed363ec9)
 
 
 * A .bset in bare/config/devel which specifies all the dependencies and the
 order in which to build them.
 
-[couverture-qemu.bset](https://github.com/cillianodonnell/rtems-source-builder/blob/qemu_switch/bare/config/devel/couverture-qemu.bset)
+[couverture-qemu.bset](https://github.com/cillianodonnell/rtems-source-builder/commit/5cf014a37dc3bc8757c069b2f159a327be7c0173)
 
 
 This build is working, tested and ready for use since the end of June.
@@ -54,6 +54,19 @@ chosen by the user. The tools can be built and used from my github here.
 [Build covoar and run RTEMS Tester from here](https://github.com/cillianodonnell/Final-GSOC)
 (For details on how to build and use the tools, see documentation section below)
 
+This is still neccessary as the following 8 commits still need to be merged,
+these are mainly the RTEMS Tester integration files and will be the last to
+be committed when all problems are solved in the section below 'Mergable'.
+
+[commit](https://github.com/cillianodonnell/Final-GSOC/commit/2fba8b005de76bd2d9e2e3a1094288795c990cab)
+[commit](https://github.com/cillianodonnell/Final-GSOC/commit/75c9896ed03b74f501cf0c39d0e695066ffdebbe)
+[commit](https://github.com/cillianodonnell/Final-GSOC/commit/866e4de389d5681773661dc9f58ef70b073ac9ba)
+[commit](https://github.com/cillianodonnell/Final-GSOC/commit/7c141b1c7acf522959d5ce43bbcf1590d666b9da)
+[commit](https://github.com/cillianodonnell/Final-GSOC/commit/047ba66aebcb4673f0b4d241d35824719cec3375)
+[commit](https://github.com/cillianodonnell/Final-GSOC/commit/c973833240a06b352ee413aabd84fba76cadf50d)
+[commit](https://github.com/cillianodonnell/Final-GSOC/commit/88671259d864dd3170e997e083c1290e511f2dc9)
+[commit](https://github.com/cillianodonnell/Final-GSOC/commit/80323c7c24481f9188a27ceda6b847868984ee32)
+
 Much of my time was spent just getting the coverage tools to run again like they
 used to in 2014 and 2015. Much of the difficulty here lay in my inexperience.
 Figuring out how RTEMS Tester works, how covoar works, learning git,
@@ -69,7 +82,7 @@ from the coverage map. It was deemed to be too restrictive a check and removed.
 This is a very simple fix but there was a lot of detective work in GDB to make
 that decision. I also had to learn GDB to do it :)
 
-[commit](https://github.com/cillianodonnell/Final-GSOC/commit/4a2975825404aaf391fb36d35640a8acd7bdb490)
+[commit was merged](https://github.com/RTEMS/rtems-tools/commit/46009037b8f4a677f0d99e2320f1a0a14c5b6826)
 
 * The next problem was some executables had jump tables added to the end of
 symbols in their objdump, while others did not add these for the same symbols.
@@ -128,7 +141,7 @@ jump table will be processed.
   {% endhighlight %}
 
 The full commit for this fix is:
-[commit](https://github.com/cillianodonnell/Final-GSOC/commit/90f879cc99a3a5141842e1f7b6bf1d0c923ef84f)
+[commit was merged](https://github.com/RTEMS/rtems-tools/commit/953415779ae4c82a0da0b2cc983e6aede255d047)
 
 
 * The final fix is that the objdump files used to gather symbol information
@@ -218,13 +231,15 @@ this patch.
 {% endhighlight %}
 
 The full commit for this, which spans over many files:
-[commit](https://github.com/cillianodonnell/Final-GSOC/commit/c6be049abac288182d226b7c002ff930ccded0be)
+[commit was merged](https://github.com/RTEMS/rtems-tools/commit/6a4859e627fa10690741d36b2f1c39a1c4d6cc3a)
 
 ## Mergable ##
 Everything that could be committed by myself and the 2 other students I
 collected and submitted to the RTEMS devel list [here](https://lists.rtems.org/pipermail/devel/2017-August/018897.html)
 This consisted mainly of standalone fixes to covoar, including the above
-3 fixes.
+3 fixes. All commits were merged into rtems-tools here:
+
+[commits merged on 29th Aug 2017](https://github.com/RTEMS/rtems-tools/commits/master@%7B08-29-2017%7D)
 
 The RTEMS Tester integration is working and very close to merging but there are
 still a few things that need to change before it is accepted. The main blockers
